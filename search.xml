@@ -33,6 +33,37 @@
     </entry>
     
     
+    
+    <entry>
+      <title>为什么mysql的varchar字符长度会被经常性的设置成255</title>
+      <link href="20210304/mysql-basic-1/"/>
+      <url>20210304/mysql-basic-1/</url>
+      
+        <content type="html"><![CDATA[<p>   很多时候我们设置varchar(255)都习以为常了，甚至我还遇到过有人以为varchar不能设置超过255的人。其实varchar没有明确最大长度，然后有人说那65535字节(bytes)不是吗？</p><p>  但是事实上如果你用的 utf8 编码的话按理最大可以设置到 varchar(21845)，但是其实一般都会说你超出。其实MySQL要求一个行定义长度不能超过 65535 bytes（所有字符串类型字段包括其字段名称占用空间都计算在内， text、blob等大字段类型除外)。</p><p>  如下图我先设置了个21842成功了，后面加个长度为3的varchar都会报错，所有如果一个表有很多varchar字段的时候，不应该把varchar设置的特别大，会影响后面的字段<br><img src="https://img-blog.csdn.net/20180611121130833?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3c3OTA2MzQ0OTM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p><p>  言归正传那为什么我们会经常性设置成varchar(255)呢？</p><p>  首先我们要知道一个概念：InnoDB存储引擎的表索引的前缀长度最长是767字节(bytes)（PS:mysql5.6及之前版本）</p><p>  你如果需要建索引，就不能超过 767 bytes；utf8编码时 255*3=765bytes ,恰恰是能建索引情况下的最大值。</p><p>  如果像lavavel5.3往后 使用的是utf8mb4编码，默认字符长度则应该是 767除以4向下取整，也就是191。 </p><p> 总结：varchar(255) 不是最优的字符长度，最优还是应该根据实际需要的来。但是这是一个保证你能少出错的一个很好的默认值</p><p>转至本人CSDN博客</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 数据库 </category>
+          
+          <category> mysql </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> mysql </tag>
+            
+            <tag> 数据库 </tag>
+            
+            <tag> varchar </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
   
   
 </search>
