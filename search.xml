@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search> 
+  
+  
+    
+    <entry>
+      <title>数据表设计注意事项</title>
+      <link href="20210304/mysql-basic/"/>
+      <url>20210304/mysql-basic/</url>
+      
+        <content type="html"><![CDATA[<p>数据库建一张表简单，但是建的表会不会给后面的自己留坑呢？我们这里聊聊创建数据库表的注意事项(以mysql为例)</p><ol><li><h4 id="库、表字符编码选择"><a href="#库、表字符编码选择" class="headerlink" title="库、表字符编码选择"></a>库、表字符编码选择</h4><p>　　mysql数据库默认编码是：字段继承表，表继承库。如果你建库时未选择编码，然后默认就是latin1，然后你每建一张表、或建需要存中文的字段，就需要重新选编码格式，是不是很坑。那么我们选字段该选什么编码呢，在中国也就逃不过GBK、UTF8了，大部分情况我建议UTF8，其实有些人会说GBK中文占字节少，可以减少IO。但是我感觉小公司，访问量小不在乎这边IO，都抗的住。大公司大部分都国际化，得为支持多种语言做准备，最关键的是，有用户输入的数据，UTF8支持更好，谁也不知道用户会输入什么。</p></li><li><h4 id="数据引擎选择MyISAM还是InnoDB或其他"><a href="#数据引擎选择MyISAM还是InnoDB或其他" class="headerlink" title="数据引擎选择MyISAM还是InnoDB或其他"></a>数据引擎选择MyISAM还是InnoDB或其他</h4><p>　　MyISAM写的时候直接锁锁表了，会阻塞其他人读和写，而读的时候还会阻塞其他人的写，所以只适合那种后台更新且操作人数少、切更新少的项目，不然它的查询速度也没法发挥。</p><p>　　InnoDB删修都是行级锁，适用于大部门场景，但是索引查询效率低一点，不支持全文索引(据说新版本支持，暂未使用新版本)，但是支持事务，需要用到事务的逻辑引擎则不能选MyISAM。</p></li><li><h4 id="表字段的默认值如何选才合理"><a href="#表字段的默认值如何选才合理" class="headerlink" title="表字段的默认值如何选才合理"></a>表字段的默认值如何选才合理</h4><p>表字段默认值最好不要有NULL，会出现以下两点问题：</p><p>查询问题：</p><p>　　查询是否为空时，int型必须写成 WHERE A=0 OR A IS NULL；字符串型：必须写成 WHERE A=”” OR A IS NULL，是不是感觉很麻烦。但是最麻烦的还是更新。</p><p>更新问题：</p><p>　　比如执行 UPDATE 表名 SET A=A+1时，你会发现值为NULL的依旧还是NULL，并没有跟想象中的那样变成1。这就很尴尬了，已经是程序BUG了。你必须 UPDATE 表名 SET A=IF(A IS NULL,1,A+1)</p></li><li><h4 id="不要忘了建索引"><a href="#不要忘了建索引" class="headerlink" title="不要忘了建索引"></a>不要忘了建索引</h4><p>　　索引能大大提升查询效率，可以缩小查询数据范围。很多时候我们只关心WHERE条件中用到的字段加索引，但是没考虑到Order By排序也需要用到索引，我们可以用explain去查看索引是否被用到，和查询扫描条数。</p></li></ol>]]></content>
+      
+      
+      <categories>
+          
+          <category> 数据库 </category>
+          
+          <category> mysql </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> mysql </tag>
+            
+            <tag> 数据库 </tag>
+            
+            <tag> 表设计 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+  
+  
+</search>
